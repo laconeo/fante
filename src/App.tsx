@@ -5,6 +5,7 @@ import { Flame, Star, X, Check, RefreshCcw, ChevronRight, Play, Heart, Shield, B
 import { clsx, type ClassValue } from 'clsx';
 import { twMerge } from 'tailwind-merge';
 import CourseBuilderScreen from './CourseBuilder';
+import { api } from './api/db';
 
 // Utility for Tailwind classes
 function cn(...inputs: ClassValue[]) {
@@ -20,188 +21,7 @@ const MOCK_COURSE_METRICS = [
   { name: 'Jun', estudiantes: 145, completados: 65, ingresos: 1450 },
 ];
 
-// --- MOCK DATA ---
-const MOCK_COURSES = [
-  {
-    id: 'c1',
-    title: "Ven, Sígueme — Semana 1",
-    description: "La Creación y el Jardín del Edén",
-    progress: 40,
-    status: 'current',
-    icon: '🌍',
-    color: 'bg-blue-500',
-    lightColor: 'bg-blue-100',
-    textColor: 'text-blue-700',
-    lessons: [
-      { id: 1, title: "La Creación del Mundo", completed: true },
-      { id: 2, title: "El Jardín del Edén", completed: true },
-      { id: 3, title: "El Arca de Noé", completed: false },
-      { id: 4, title: "La Torre de Babel", completed: false },
-      { id: 5, title: "Abraham", completed: false },
-    ]
-  },
-  {
-    id: 'c2',
-    title: "Ven, Sígueme — Semana 2",
-    description: "La Caída y la Expiación",
-    progress: 0,
-    status: 'available',
-    icon: '🍎',
-    color: 'bg-violet-500',
-    lightColor: 'bg-violet-100',
-    textColor: 'text-violet-700',
-    lessons: [
-      { id: 1, title: "Lección 1", completed: false },
-      { id: 2, title: "Lección 2", completed: false },
-    ]
-  },
-  {
-    id: 'c3',
-    title: "Ven, Sígueme — Semana 3",
-    description: "El Arca de Noé",
-    progress: 0,
-    status: 'available',
-    icon: '⛵',
-    color: 'bg-orange-500',
-    lightColor: 'bg-orange-100',
-    textColor: 'text-orange-700',
-    lessons: [
-      { id: 1, title: "Lección 1", completed: false },
-    ]
-  },
-  {
-    id: 'c4',
-    title: "Ven, Sígueme — Semana 4",
-    description: "La Torre de Babel",
-    progress: 0,
-    status: 'locked',
-    icon: '🗼',
-    color: 'bg-gray-400',
-    lightColor: 'bg-gray-100',
-    textColor: 'text-gray-600',
-    lessons: []
-  }
-];
-
-const MOCK_CATALOG_COURSES = [
-  {
-    id: 'cat1',
-    title: 'Comunicación Inicial con Pictogramas',
-    description: 'Aprende a utilizar sistemas de comunicación aumentativa y alternativa (SAAC) básicos en casa.',
-    objective: 'Establecer un sistema de comunicación funcional para necesidades básicas.',
-    childObjectives: [
-      'Identificar pictogramas de necesidades básicas (comer, beber, baño).',
-      'Señalar el pictograma correspondiente para pedir algo.',
-      'Reducir la frustración al no poder comunicarse verbalmente.'
-    ],
-    classification: 'libre',
-    professionalName: null,
-    price: 'Gratis',
-    icon: '🗣️',
-    color: 'bg-blue-500',
-    lightColor: 'bg-blue-100',
-    textColor: 'text-blue-700',
-  },
-  {
-    id: 'cat2',
-    title: 'Rutinas de Sueño Saludables',
-    description: 'Estrategias y herramientas visuales para mejorar la calidad del sueño y establecer rutinas nocturnas.',
-    objective: 'Lograr un descanso ininterrumpido y una rutina de ir a la cama sin estrés.',
-    childObjectives: [
-      'Seguir la secuencia visual de la rutina nocturna.',
-      'Permanecer en la cama durante la noche.',
-      'Asociar elementos relajantes con la hora de dormir.'
-    ],
-    classification: 'supervisado',
-    professionalName: 'Dra. Ana Martínez',
-    price: 'Requiere Plan Clínica',
-    icon: '🌙',
-    color: 'bg-violet-500',
-    lightColor: 'bg-violet-100',
-    textColor: 'text-violet-700',
-  },
-  {
-    id: 'cat3',
-    title: 'Regulación Emocional: El Semáforo',
-    description: 'Técnica visual para ayudar a identificar y gestionar emociones intensas.',
-    objective: 'Proporcionar herramientas de autorregulación emocional.',
-    childObjectives: [
-      'Identificar su estado emocional usando los colores del semáforo.',
-      'Aplicar técnicas de respiración cuando está en "amarillo".',
-      'Buscar un espacio de calma cuando está en "rojo".'
-    ],
-    classification: 'supervisado',
-    professionalName: 'Lic. Carlos Gómez',
-    price: 'Requiere Plan Clínica',
-    icon: '🚦',
-    color: 'bg-emerald-500',
-    lightColor: 'bg-emerald-100',
-    textColor: 'text-emerald-700',
-  },
-  {
-    id: 'cat4',
-    title: 'Juego Simbólico Básico',
-    description: 'Guía para padres sobre cómo fomentar el juego imaginativo y la interacción social.',
-    objective: 'Desarrollar habilidades de juego compartido e imaginación.',
-    childObjectives: [
-      'Imitar acciones simples con objetos cotidianos.',
-      'Participar en juegos de roles básicos (ej. dar de comer a un muñeco).',
-      'Mantener la atención conjunta durante el juego.'
-    ],
-    classification: 'libre',
-    professionalName: null,
-    price: 'Gratis',
-    icon: '🧸',
-    color: 'bg-orange-500',
-    lightColor: 'bg-orange-100',
-    textColor: 'text-orange-700',
-  }
-];
-
-const MOCK_LESSON_BLOCKS = [
-  {
-    type: "info",
-    contentType: "text",
-    contentUrl: "",
-    content: "Dios creó el mundo en 6 días. Hizo la luz, el cielo, la tierra, las plantas, los animales y a nosotros.",
-    image: "🌍",
-  },
-  {
-    type: "multiple_choice",
-    contentType: "text",
-    contentUrl: "",
-    question: "¿Cuántos días tardó Dios en crear el mundo?",
-    options: [
-      { id: 'a', text: "1 día", isCorrect: false, feedback: "¡Casi! Tomó un poquito más de tiempo." },
-      { id: 'b', text: "6 días", isCorrect: true, feedback: "¡Correcto! ¡Sos increíble!" },
-      { id: 'c', text: "10 días", isCorrect: false, feedback: "¡Casi! Fue un poco menos." },
-    ]
-  }
-];
-
-const MOCK_QUESTS = [
-  { id: 'q1', title: 'Gana 50 XP', current: 10, max: 50, icon: '⚡' },
-  { id: 'q2', title: 'Completa 2 lecciones', current: 1, max: 2, icon: '📚' },
-  { id: 'q3', title: 'Obtén un 100% en 1 lección', current: 0, max: 1, icon: '🎯' },
-];
-
-const MOCK_ACHIEVEMENTS = [
-  { id: 'a1', title: 'Fuego Salvaje', description: 'Alcanza una racha de 365 días', current: 324, max: 365, level: 9, icon: '🔥', bg: 'bg-orange-100', borderColor: 'border-orange-200', completed: false },
-  { id: 'a2', title: 'Erudito', description: 'Gana 5000 XP', current: 1200, max: 5000, level: 3, icon: '🦉', bg: 'bg-blue-100', borderColor: 'border-blue-200', completed: false },
-  { id: 'a3', title: 'Madrugador', description: 'Completa 10 lecciones antes de las 9 AM', current: 10, max: 10, level: 2, icon: '🌅', bg: 'bg-yellow-100', borderColor: 'border-yellow-400', completed: true },
-  { id: 'a4', title: 'Imparable', description: 'Completa 5 lecciones sin equivocarte', current: 2, max: 5, level: 1, icon: '🛡️', bg: 'bg-red-100', borderColor: 'border-red-200', completed: false },
-  { id: 'a5', title: 'Sociable', description: 'Sigue a 3 amigos', current: 3, max: 3, level: 1, icon: '👋', bg: 'bg-green-100', borderColor: 'border-green-400', completed: true },
-];
-
-const MOCK_FRIENDS = [
-  { id: 'f1', name: 'María García', username: 'mariag', xp: 14500, avatar: '👩🏽', isFollowing: true },
-  { id: 'f2', name: 'Carlos López', username: 'carlosl', xp: 12200, avatar: '👨🏻', isFollowing: true },
-  { id: 'f3', name: 'Ana Martínez', username: 'anamart', xp: 9800, avatar: '👩🏼', isFollowing: false },
-];
-
-// --- COMPONENTS ---
-
-function ProfileView({ xp, streak }: { xp: number, streak: number }) {
+function ProfileView({ xp, streak, friends }: { xp: number, streak: number, friends: any[] }) {
   return (
     <div className="w-full max-w-2xl px-4 py-8 pb-24 md:pb-8 mx-auto flex flex-col gap-8">
       {/* Header Profile */}
@@ -276,12 +96,12 @@ function ProfileView({ xp, streak }: { xp: number, streak: number }) {
           </button>
         </div>
         <div className="bg-white border-2 border-gray-200 rounded-3xl flex flex-col overflow-hidden">
-          {MOCK_FRIENDS.map((friend, index) => (
+          {friends.map((friend, index) => (
             <div 
               key={friend.id} 
               className={cn(
                 "p-4 flex gap-4 items-center hover:bg-gray-50 transition-colors cursor-pointer",
-                index !== MOCK_FRIENDS.length - 1 && "border-b-2 border-gray-100"
+                index !== friends.length - 1 && "border-b-2 border-gray-100"
               )}
             >
               <div className="w-14 h-14 rounded-full bg-blue-100 border-2 border-blue-200 flex items-center justify-center text-2xl">
@@ -302,7 +122,7 @@ function ProfileView({ xp, streak }: { xp: number, streak: number }) {
   );
 }
 
-function AchievementsView() {
+function AchievementsView({ quests, achievements }: { quests: any[], achievements: any[] }) {
   return (
     <div className="w-full max-w-2xl px-4 py-8 pb-24 md:pb-8 mx-auto flex flex-col gap-8">
       {/* Daily Quests */}
@@ -312,7 +132,7 @@ function AchievementsView() {
           <span className="text-blue-500 font-bold text-sm">Faltan 14h</span>
         </div>
         <div className="bg-white border-2 border-gray-200 rounded-3xl p-5 flex flex-col gap-5">
-          {MOCK_QUESTS.map(quest => (
+          {quests.map(quest => (
             <div key={quest.id} className="flex items-center gap-4">
               <div className="text-4xl">{quest.icon}</div>
               <div className="flex-1">
@@ -339,12 +159,12 @@ function AchievementsView() {
       <section>
         <h2 className="text-2xl font-bold text-blue-950 mb-4 px-2">Logros</h2>
         <div className="bg-white border-2 border-gray-200 rounded-3xl flex flex-col overflow-hidden">
-          {MOCK_ACHIEVEMENTS.map((achievement, index) => (
+          {achievements.map((achievement, index) => (
             <div 
               key={achievement.id} 
               className={cn(
                 "p-5 flex gap-4 items-center",
-                index !== MOCK_ACHIEVEMENTS.length - 1 && "border-b-2 border-gray-100",
+                index !== achievements.length - 1 && "border-b-2 border-gray-100",
                 achievement.completed ? "bg-yellow-50/30" : ""
               )}
             >
@@ -447,9 +267,9 @@ function CourseMosaicView({ courses, onSelectCourse }: { courses: any[], onSelec
   );
 }
 
-function CoursePathView({ courseId, onBack, onStartLesson }: { courseId: string, onBack: () => void, onStartLesson: () => void }) {
+function CoursePathView({ courseId, courses, onBack, onStartLesson }: { courseId: string, courses: any[], onBack: () => void, onStartLesson: () => void }) {
   const today = new Date().toLocaleDateString('es-AR', { weekday: 'long', day: 'numeric', month: 'long' });
-  const course = MOCK_COURSES.find(c => c.id === courseId) || MOCK_COURSES[0];
+  const course = courses.find(c => c.id === courseId) || courses[0];
   
   return (
     <>
@@ -563,10 +383,10 @@ function SplashScreen({ onFinish }: { onFinish: () => void }) {
 }
 
 // 0. Catalog Screen
-function CatalogScreen({ onBack, onEnterApp }: { onBack: () => void, onEnterApp: () => void }) {
+function CatalogScreen({ catalogCourses, onBack, onEnterApp }: { catalogCourses: any[], onBack: () => void, onEnterApp: () => void }) {
   const [filter, setFilter] = useState<'todos' | 'libre' | 'supervisado'>('todos');
 
-  const filteredCourses = MOCK_CATALOG_COURSES.filter(course => 
+  const filteredCourses = catalogCourses.filter(course => 
     filter === 'todos' ? true : course.classification === filter
   );
 
@@ -693,7 +513,17 @@ function CatalogScreen({ onBack, onEnterApp }: { onBack: () => void, onEnterApp:
 }
 
 // 0. Landing Page
-function LandingPage({ onEnterApp, onEnterPro, onEnterCatalog }: { onEnterApp: () => void, onEnterPro: () => void, onEnterCatalog: () => void }) {
+function LandingPage({ 
+  catalogCourses,
+  onEnterApp, 
+  onEnterPro, 
+  onEnterCatalog 
+}: { 
+  catalogCourses: any[],
+  onEnterApp: () => void, 
+  onEnterPro: () => void, 
+  onEnterCatalog: () => void 
+}) {
   return (
     <div className="min-h-screen bg-blue-50 font-sans overflow-x-hidden selection:bg-blue-200">
       {/* Navbar */}
@@ -962,7 +792,7 @@ function LandingPage({ onEnterApp, onEnterPro, onEnterCatalog }: { onEnterApp: (
             </p>
           </div>
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 mb-12">
-            {MOCK_CATALOG_COURSES.slice(0, 3).map((course) => (
+            {catalogCourses.slice(0, 3).map((course) => (
               <div key={course.id} className="bg-white border-2 border-blue-100 rounded-3xl p-6 hover:border-blue-300 transition-all hover:shadow-xl hover:shadow-blue-900/5 flex flex-col">
                 <div className="flex items-start justify-between mb-4">
                   <div className={cn("w-14 h-14 rounded-2xl flex items-center justify-center text-3xl", course.lightColor)}>
@@ -1149,12 +979,22 @@ function LandingPage({ onEnterApp, onEnterPro, onEnterCatalog }: { onEnterApp: (
 function HomeScreen({ 
   streak, 
   xp, 
+  courses,
+  catalogCourses,
+  quests,
+  achievements,
+  friends,
   onStartLesson,
   onBack,
   onEnterCatalog
 }: { 
   streak: number; 
   xp: number; 
+  courses: any[];
+  catalogCourses: any[];
+  quests: any[];
+  achievements: any[];
+  friends: any[];
   onStartLesson: () => void;
   onBack: () => void;
   onEnterCatalog: () => void;
@@ -1219,7 +1059,7 @@ function HomeScreen({
                 {activeTab === 'cursos' ? (selectedCourseId ? 'Curso Actual' : 'Plataforma') : activeTab === 'logros' ? 'Tus Metas' : 'Perfil'}
               </span>
               <span className="text-lg sm:text-xl font-bold text-blue-950 truncate max-w-[140px] sm:max-w-xs">
-                {activeTab === 'cursos' ? (selectedCourseId ? MOCK_COURSES.find(c => c.id === selectedCourseId)?.title : 'Fante') : activeTab === 'logros' ? 'Logros y Misiones' : 'Mi Perfil'}
+                {activeTab === 'cursos' ? (selectedCourseId ? courses.find(c => c.id === selectedCourseId)?.title : 'Fante') : activeTab === 'logros' ? 'Logros y Misiones' : 'Mi Perfil'}
               </span>
             </div>
           </div>
@@ -1239,19 +1079,20 @@ function HomeScreen({
           selectedCourseId ? (
             <CoursePathView 
               courseId={selectedCourseId} 
+              courses={courses}
               onBack={() => setSelectedCourseId(null)} 
               onStartLesson={onStartLesson} 
             />
           ) : (
             <CourseMosaicView 
-              courses={MOCK_COURSES} 
+              courses={courses} 
               onSelectCourse={(id) => setSelectedCourseId(id)} 
             />
           )
         ) : activeTab === 'logros' ? (
-          <AchievementsView />
+          <AchievementsView quests={quests} achievements={achievements} />
         ) : activeTab === 'perfil' ? (
-          <ProfileView xp={xp} streak={streak} />
+          <ProfileView xp={xp} streak={streak} friends={friends} />
         ) : (
           <div className="flex-1 flex items-center justify-center text-blue-400 font-bold text-2xl mt-20">
             Próximamente...
@@ -1294,11 +1135,12 @@ function HomeScreen({
   );
 }
 
-// 2. Lesson Screen
 function LessonScreen({ 
+  lessonBlocks,
   onClose, 
   onComplete 
 }: { 
+  lessonBlocks: any[];
   onClose: () => void; 
   onComplete: () => void;
 }) {
@@ -1307,8 +1149,8 @@ function LessonScreen({
   const [feedbackState, setFeedbackState] = useState<'idle' | 'correct' | 'incorrect'>('idle');
   const mainRef = React.useRef<HTMLElement>(null);
   
-  const block = MOCK_LESSON_BLOCKS[currentBlockIndex];
-  const progress = ((currentBlockIndex) / MOCK_LESSON_BLOCKS.length) * 100;
+  const block = lessonBlocks[currentBlockIndex];
+  const progress = ((currentBlockIndex) / lessonBlocks.length) * 100;
 
   useEffect(() => {
     if (mainRef.current) {
@@ -1323,7 +1165,7 @@ function LessonScreen({
     }
 
     if ((block.type === 'multiple_choice' || block.type === 'true_false') && selectedOption) {
-      const option = block.options?.find(o => o.id === selectedOption);
+      const option = block.options?.find((o: any) => o.id === selectedOption);
       if (option?.isCorrect) {
         setFeedbackState('correct');
       } else {
@@ -1335,7 +1177,7 @@ function LessonScreen({
   const handleNext = () => {
     setFeedbackState('idle');
     setSelectedOption(null);
-    if (currentBlockIndex < MOCK_LESSON_BLOCKS.length - 1) {
+    if (currentBlockIndex < lessonBlocks.length - 1) {
       setCurrentBlockIndex(prev => prev + 1);
     } else {
       onComplete();
@@ -1355,7 +1197,7 @@ function LessonScreen({
           <motion.div 
             className="h-full bg-blue-500 rounded-full"
             initial={{ width: `${progress}%` }}
-            animate={{ width: `${((currentBlockIndex + (feedbackState === 'correct' ? 1 : 0)) / MOCK_LESSON_BLOCKS.length) * 100}%` }}
+            animate={{ width: `${((currentBlockIndex + (feedbackState === 'correct' ? 1 : 0)) / lessonBlocks.length) * 100}%` }}
             transition={{ type: "spring", stiffness: 50 }}
           />
         </div>
@@ -1693,7 +1535,15 @@ interface Participant {
   course: string;
 }
 
-function ProDashboardScreen({ onLogout, onEnterCatalog }: { onLogout: () => void, onEnterCatalog: () => void }) {
+function ProDashboardScreen({ 
+  onLogout, 
+  onEnterCatalog,
+  onSaveCourse
+}: { 
+  onLogout: () => void, 
+  onEnterCatalog: () => void,
+  onSaveCourse: (course: any) => void
+}) {
   const [role, setRole] = useState<'gratis' | 'pro' | 'clinica'>('clinica');
   const [activeTab, setActiveTab] = useState<'pacientes' | 'cursos' | 'facturacion' | 'historial_facturas' | 'nuevo_curso_opciones' | 'crear_curso' | 'importar_curso' | 'resumen_clinica' | 'profesionales_clinica' | 'premium_upsell'>('resumen_clinica');
   
@@ -2487,7 +2337,7 @@ function ProDashboardScreen({ onLogout, onEnterCatalog }: { onLogout: () => void
           <CourseBuilderScreen 
             onBack={() => setActiveTab('nuevo_curso_opciones')} 
             onSave={(course) => {
-              console.log('Course saved:', course);
+              onSaveCourse(course);
               setActiveTab('cursos');
             }} 
           />
@@ -2658,6 +2508,42 @@ export default function App() {
   const [streak, setStreak] = useState(324); // Mock initial streak from PDF
   const [xp, setXp] = useState(1200);
 
+  // States for live data
+  const [courses, setCourses] = useState<any[]>([]);
+  const [catalogCourses, setCatalogCourses] = useState<any[]>([]);
+  const [quests, setQuests] = useState<any[]>([]);
+  const [achievements, setAchievements] = useState<any[]>([]);
+  const [friends, setFriends] = useState<any[]>([]);
+  const [lessonBlocks, setLessonBlocks] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  // Initial fetch
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const [c, cat, q, a, f, lb] = await Promise.all([
+          api.getCourses(),
+          api.getCatalogCourses(),
+          api.getQuests(),
+          api.getAchievements(),
+          api.getFriends(),
+          api.getLessonBlocks()
+        ]);
+        setCourses(c);
+        setCatalogCourses(cat);
+        setQuests(q);
+        setAchievements(a);
+        setFriends(f);
+        setLessonBlocks(lb);
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchData();
+  }, []);
+
   const handleStartLesson = () => {
     setScreen('lesson');
   };
@@ -2668,6 +2554,24 @@ export default function App() {
     setScreen('streak_animation');
   };
 
+  const handleSaveCourse = async (course: any) => {
+    try {
+      const saved = await api.saveCourse(course);
+      setCourses(prev => {
+        const index = prev.findIndex(c => c.id === saved.id);
+        if (index !== -1) {
+          const newCourses = [...prev];
+          newCourses[index] = saved;
+          return newCourses;
+        }
+        return [...prev, saved];
+      });
+      setScreen('pro_dashboard');
+    } catch (error) {
+      console.error("Error saving course:", error);
+    }
+  };
+
   const handleFinishStreakAnimation = () => {
     setScreen('completion');
   };
@@ -2676,91 +2580,116 @@ export default function App() {
     setScreen('home');
   };
 
+  if (loading) {
+    return (
+      <div className="fixed inset-0 bg-blue-500 flex flex-col items-center justify-center z-50">
+        <motion.div
+          animate={{ 
+            y: [0, -20, 0],
+            rotate: [0, 10, -10, 0]
+          }}
+          transition={{ duration: 1, repeat: Infinity }}
+          className="text-8xl mb-8"
+        >
+          🐘
+        </motion.div>
+        <p className="text-white font-bold text-xl animate-pulse">Cargando...</p>
+      </div>
+    );
+  }
+
   return (
-    <>
-      <AnimatePresence mode="wait">
-        {screen === 'landing' && (
-          <motion.div key="landing" exit={{ opacity: 0 }}>
-            <LandingPage 
-              onEnterApp={() => setScreen('splash')} 
-              onEnterPro={() => setScreen('pro_login')}
-              onEnterCatalog={() => setScreen('catalog')}
-            />
-          </motion.div>
-        )}
+    <AnimatePresence mode="wait">
+      {screen === 'landing' && (
+        <motion.div key="landing" exit={{ opacity: 0 }}>
+          <LandingPage 
+            catalogCourses={catalogCourses}
+            onEnterApp={() => setScreen('splash')} 
+            onEnterPro={() => setScreen('pro_login')}
+            onEnterCatalog={() => setScreen('catalog')}
+          />
+        </motion.div>
+      )}
 
-        {screen === 'catalog' && (
-          <motion.div key="catalog" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -20 }}>
-            <CatalogScreen 
-              onBack={() => setScreen('landing')}
-              onEnterApp={() => setScreen('splash')}
-            />
-          </motion.div>
-        )}
+      {screen === 'catalog' && (
+        <motion.div key="catalog" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -20 }}>
+          <CatalogScreen 
+            catalogCourses={catalogCourses}
+            onBack={() => setScreen('landing')}
+            onEnterApp={() => setScreen('splash')}
+          />
+        </motion.div>
+      )}
 
-        {screen === 'pro_login' && (
-          <motion.div key="pro_login" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }}>
-            <ProLoginScreen 
-              onLogin={() => setScreen('pro_dashboard')} 
-              onBack={() => setScreen('landing')} 
-            />
-          </motion.div>
-        )}
+      {screen === 'pro_login' && (
+        <motion.div key="pro_login" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }}>
+          <ProLoginScreen 
+            onLogin={() => setScreen('pro_dashboard')} 
+            onBack={() => setScreen('landing')} 
+          />
+        </motion.div>
+      )}
 
-        {screen === 'pro_dashboard' && (
-          <motion.div key="pro_dashboard" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
-            <ProDashboardScreen 
-              onLogout={() => setScreen('landing')} 
-              onEnterCatalog={() => setScreen('catalog')}
-            />
-          </motion.div>
-        )}
+      {screen === 'pro_dashboard' && (
+        <motion.div key="pro_dashboard" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
+          <ProDashboardScreen 
+            onLogout={() => setScreen('landing')} 
+            onEnterCatalog={() => setScreen('catalog')}
+            onSaveCourse={handleSaveCourse}
+          />
+        </motion.div>
+      )}
 
-        {screen === 'splash' && (
-          <motion.div key="splash" exit={{ opacity: 0 }}>
-            <SplashScreen onFinish={() => setScreen('home')} />
-          </motion.div>
-        )}
+      {screen === 'splash' && (
+        <motion.div key="splash" exit={{ opacity: 0 }}>
+          <SplashScreen onFinish={() => setScreen('home')} />
+        </motion.div>
+      )}
 
-        {screen === 'home' && (
-          <motion.div key="home" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
-            <HomeScreen 
-              streak={streak} 
-              xp={xp} 
-              onStartLesson={handleStartLesson} 
-              onBack={() => setScreen('landing')}
-              onEnterCatalog={() => setScreen('catalog')}
-            />
-          </motion.div>
-        )}
-        
-        {screen === 'lesson' && (
-          <motion.div key="lesson" initial={{ opacity: 0, y: 50 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: 50 }}>
-            <LessonScreen 
-              onClose={() => setScreen('home')} 
-              onComplete={handleCompleteLesson} 
-            />
-          </motion.div>
-        )}
+      {screen === 'home' && (
+        <motion.div key="home" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
+          <HomeScreen 
+            streak={streak} 
+            xp={xp} 
+            courses={courses}
+            catalogCourses={catalogCourses}
+            quests={quests}
+            achievements={achievements}
+            friends={friends}
+            onStartLesson={handleStartLesson} 
+            onBack={() => setScreen('landing')}
+            onEnterCatalog={() => setScreen('catalog')}
+          />
+        </motion.div>
+      )}
+      
+      {screen === 'lesson' && (
+        <motion.div key="lesson" initial={{ opacity: 0, y: 50 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: 50 }}>
+          <LessonScreen 
+            lessonBlocks={lessonBlocks}
+            onClose={() => setScreen('home')} 
+            onComplete={handleCompleteLesson} 
+          />
+        </motion.div>
+      )}
 
-        {screen === 'streak_animation' && (
-          <motion.div key="streak_animation" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
-            <StreakAnimationScreen 
-              streak={streak} 
-              onFinish={handleFinishStreakAnimation} 
-            />
-          </motion.div>
-        )}
+      {screen === 'streak_animation' && (
+        <motion.div key="streak_animation" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
+          <StreakAnimationScreen 
+            streak={streak} 
+            onFinish={handleFinishStreakAnimation} 
+          />
+        </motion.div>
+      )}
 
-        {screen === 'completion' && (
-          <motion.div key="completion" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
-            <CompletionScreen 
-              streak={streak} 
-              onFinish={handleFinish} 
-            />
-          </motion.div>
-        )}
-      </AnimatePresence>
-    </>
+      {screen === 'completion' && (
+        <motion.div key="completion" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
+          <CompletionScreen 
+            streak={streak} 
+            onFinish={handleFinish} 
+          />
+        </motion.div>
+      )}
+    </AnimatePresence>
   );
 }

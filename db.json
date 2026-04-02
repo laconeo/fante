@@ -1,0 +1,176 @@
+{
+  "courses": [
+    {
+      "id": "c1",
+      "title": "Ven, Sígueme — Semana 1",
+      "description": "La Creación y el Jardín del Edén",
+      "progress": 40,
+      "status": "current",
+      "icon": "🌍",
+      "color": "bg-blue-500",
+      "lightColor": "bg-blue-100",
+      "textColor": "text-blue-700",
+      "lessons": [
+        { "id": 1, "title": "La Creación del Mundo", "completed": true },
+        { "id": 2, "title": "El Jardín del Edén", "completed": true },
+        { "id": 3, "title": "El Arca de Noé", "completed": false },
+        { "id": 4, "title": "La Torre de Babel", "completed": false },
+        { "id": 5, "title": "Abraham", "completed": false }
+      ]
+    },
+    {
+      "id": "c2",
+      "title": "Ven, Sígueme — Semana 2",
+      "description": "La Caída y la Expiación",
+      "progress": 0,
+      "status": "available",
+      "icon": "🍎",
+      "color": "bg-violet-500",
+      "lightColor": "bg-violet-100",
+      "textColor": "text-violet-700",
+      "lessons": [
+        { "id": 1, "title": "Lección 1", "completed": false },
+        { "id": 2, "title": "Lección 2", "completed": false }
+      ]
+    },
+    {
+      "id": "c3",
+      "title": "Ven, Sígueme — Semana 3",
+      "description": "El Arca de Noé",
+      "progress": 0,
+      "status": "available",
+      "icon": "⛵",
+      "color": "bg-orange-500",
+      "lightColor": "bg-orange-100",
+      "textColor": "text-orange-700",
+      "lessons": [
+        { "id": 1, "title": "Lección 1", "completed": false }
+      ]
+    },
+    {
+      "id": "c4",
+      "title": "Ven, Sígueme — Semana 4",
+      "description": "La Torre de Babel",
+      "progress": 0,
+      "status": "locked",
+      "icon": "🗼",
+      "color": "bg-gray-400",
+      "lightColor": "bg-gray-100",
+      "textColor": "text-gray-600",
+      "lessons": []
+    }
+  ],
+  "catalogCourses": [
+    {
+      "id": "cat1",
+      "title": "Comunicación Inicial con Pictogramas",
+      "description": "Aprende a utilizar sistemas de comunicación aumentativa y alternativa (SAAC) básicos en casa.",
+      "objective": "Establecer un sistema de comunicación funcional para necesidades básicas.",
+      "childObjectives": [
+        "Identificar pictogramas de necesidades básicas (comer, beber, baño).",
+        "Señalar el pictograma correspondiente para pedir algo.",
+        "Reducir la frustración al no poder comunicarse verbalmente."
+      ],
+      "classification": "libre",
+      "professionalName": null,
+      "price": "Gratis",
+      "icon": "🗣️",
+      "color": "bg-blue-500",
+      "lightColor": "bg-blue-100",
+      "textColor": "text-blue-700"
+    },
+    {
+      "id": "cat2",
+      "title": "Rutinas de Sueño Saludables",
+      "description": "Estrategias y herramientas visuales para mejorar la calidad del sueño y establecer rutinas nocturnas.",
+      "objective": "Lograr un descanso ininterrumpido y una rutina de ir a la cama sin estrés.",
+      "childObjectives": [
+        "Seguir la secuencia visual de la rutina nocturna.",
+        "Permanecer en la cama durante la noche.",
+        "Asociar elementos relajantes con la hora de dormir."
+      ],
+      "classification": "supervisado",
+      "professionalName": "Dra. Ana Martínez",
+      "price": "Requiere Plan Clínica",
+      "icon": "🌙",
+      "color": "bg-violet-500",
+      "lightColor": "bg-violet-100",
+      "textColor": "text-violet-700"
+    },
+    {
+      "id": "cat3",
+      "title": "Regulación Emocional: El Semáforo",
+      "description": "Técnica visual para ayudar a identificar y gestionar emociones intensas.",
+      "objective": "Proporcionar herramientas de autorregulación emocional.",
+      "childObjectives": [
+        "Identificar su estado emocional usando los colores del semáforo.",
+        "Aplicar técnicas de respiración cuando está en \"amarillo\".",
+        "Buscar un espacio de calma cuando está en \"rojo\"."
+      ],
+      "classification": "supervisado",
+      "professionalName": "Lic. Carlos Gómez",
+      "price": "Requiere Plan Clínica",
+      "icon": "🚦",
+      "color": "bg-emerald-500",
+      "lightColor": "bg-emerald-100",
+      "textColor": "text-emerald-700"
+    },
+    {
+      "id": "cat4",
+      "title": "Juego Simbólico Básico",
+      "description": "Guía para padres sobre cómo fomentar el juego imaginativo y la interacción social.",
+      "objective": "Desarrollar habilidades de juego compartido e imaginación.",
+      "childObjectives": [
+        "Imitar acciones simples con objetos cotidianos.",
+        "Participar en juegos de roles básicos (ej. dar de comer a un muñeco).",
+        "Mantener la atención conjunta durante el juego."
+      ],
+      "classification": "libre",
+      "professionalName": null,
+      "price": "Gratis",
+      "icon": "🧸",
+      "color": "bg-orange-500",
+      "lightColor": "bg-orange-100",
+      "textColor": "text-orange-700"
+    }
+  ],
+  "lessonBlocks": [
+    {
+      "id": 1,
+      "type": "info",
+      "contentType": "text",
+      "contentUrl": "",
+      "content": "Dios creó el mundo en 6 días. Hizo la luz, el cielo, la tierra, las plantas, los animales y a nosotros.",
+      "image": "🌍"
+    },
+    {
+      "id": 2,
+      "type": "multiple_choice",
+      "contentType": "text",
+      "contentUrl": "",
+      "question": "¿Cuántos días tardó Dios en crear el mundo?",
+      "options": [
+        { "id": "a", "text": "1 día", "isCorrect": false, "feedback": "¡Casi! Tomó un poquito más de tiempo." },
+        { "id": "b", "text": "6 días", "isCorrect": true, "feedback": "¡Correcto! ¡Sos increíble!" },
+        { "id": "c", "text": "10 días", "isCorrect": false, "feedback": "¡Casi! Fue un poco menos." }
+      ]
+    }
+  ],
+  "quests": [
+    { "id": "q1", "title": "Gana 50 XP", "current": 10, "max": 50, "icon": "⚡" },
+    { "id": "q2", "title": "Completa 2 lecciones", "current": 1, "max": 2, "icon": "📚" },
+    { "id": "q3", "title": "Obtén un 100% en 1 lección", "current": 0, "max": 1, "icon": "🎯" }
+  ],
+  "achievements": [
+    { "id": "a1", "title": "Fuego Salvaje", "description": "Alcanza una racha de 365 días", "current": 324, "max": 365, "level": 9, "icon": "🔥", "bg": "bg-orange-100", "borderColor": "border-orange-200", "completed": false },
+    { "id": "a2", "title": "Erudito", "description": "Gana 5000 XP", "current": 1200, "max": 5000, "level": 3, "icon": "🦉", "bg": "bg-blue-100", "borderColor": "border-blue-200", "completed": false },
+    { "id": "a3", "title": "Madrugador", "description": "Completa 10 lecciones antes de las 9 AM", "current": 10, "max": 10, "level": 2, "icon": "🌅", "bg": "bg-yellow-100", "borderColor": "border-yellow-400", "completed": true },
+    { "id": "a4", "title": "Imparable", "description": "Completa 5 lecciones sin equivocarte", "current": 2, "max": 5, "level": 1, "icon": "🛡️", "bg": "bg-red-100", "borderColor": "border-red-200", "completed": false },
+    { "id": "a5", "title": "Sociable", "description": "Sigue a 3 amigos", "current": 3, "max": 3, "level": 1, "icon": "👋", "bg": "bg-green-100", "borderColor": "border-green-400", "completed": true }
+  ],
+  "friends": [
+    { "id": "f1", "name": "María García", "username": "mariag", "xp": 14500, "avatar": "👩🏽", "isFollowing": true },
+    { "id": "f2", "name": "Carlos López", "username": "carlosl", "xp": 12200, "avatar": "👨🏻", "isFollowing": true },
+    { "id": "f3", "name": "Ana Martínez", "username": "anamart", "xp": 9800, "avatar": "👩🏼", "isFollowing": false }
+  ]
+}
