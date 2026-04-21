@@ -1,0 +1,4 @@
+C:\Users\laconeo\Documents\fante\index.html
+C:\Users\laconeo\Documents\fante\dist\index.html
+C:\Users\laconeo\Documents\fante\node_modules\.cache\gh-pages\https!github.com!laconeo!fante.git\index.html
+C:\Users\laconeo\Documents\fante\node_modules\json-server\views\index.html
