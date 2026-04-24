@@ -1,77 +1,141 @@
-const IS_PROD = import.meta.env.PROD;
-const BASE_URL = 'http://localhost:3001';
+import { supabase } from '../lib/supabase';
 
-// Initial data for localStorage fallback
-const lsDB = {
-  data: null as any,
-  async init() {
-    if (this.data) return this.data;
-    const stored = localStorage.getItem('fante_db');
-    if (stored) {
-      this.data = JSON.parse(stored);
-    } else {
-      try {
-        const response = await fetch('./db.json');
-        this.data = await response.json();
-        this.save();
-      } catch (e) {
-        console.error("Could not load initial db.json", e);
-        this.data = {};
-      }
-    }
-    return this.data;
+// ─── Patients ───────────────────────────────────────────────────────────────
+export const patientsApi = {
+  getAll: async () => {
+    const { data, error } = await supabase.from('patients').select('*').order('created_at', { ascending: true });
+    if (error) throw error;
+    // Map snake_case from DB to camelCase for the UI
+    return (data || []).map((p: any) => ({
+      id: p.id,
+      name: p.name,
+      age: p.age,
+      birthDate: p.birth_date,
+      email: p.email,
+      avatar: p.avatar,
+      progress: p.progress ?? 0,
+      lastActive: p.last_active ?? 'Nunca',
+      course: p.course ?? 'Sin asignar',
+    }));
   },
-  save() {
-    localStorage.setItem('fante_db', JSON.stringify(this.data));
-  }
+
+  upsert: async (patient: any) => {
+    const { error } = await supabase.from('patients').upsert({
+      id: patient.id,
+      name: patient.name,
+      age: patient.age,
+      birth_date: patient.birthDate,
+      email: patient.email,
+      avatar: patient.avatar,
+      progress: patient.progress ?? 0,
+      last_active: patient.lastActive ?? 'Recién añadido',
+      course: patient.course ?? 'Sin asignar',
+    });
+    if (error) throw error;
+  },
+
+  delete: async (id: string) => {
+    const { error } = await supabase.from('patients').delete().eq('id', id);
+    if (error) throw error;
+  },
 };
 
-const callAPI = async (endpoint: string, options: RequestInit = {}) => {
-  if (!IS_PROD) {
-    try {
-      const response = await fetch(`${BASE_URL}${endpoint}`, options);
-      if (response.ok) return await response.json();
-    } catch (e) {
-      console.warn("JSON Server not reachable, falling back to localStorage");
-    }
-  }
+// ─── Courses (full schema with weeks/lessons/blocks) ────────────────────────
+export const coursesApi = {
+  getAll: async () => {
+    const { data, error } = await supabase.from('courses').select('*').order('created_at', { ascending: true });
+    if (error) throw error;
+    return (data || []).map((c: any) => ({
+      id: c.id,
+      title: c.title,
+      description: c.description,
+      cover_image_url: c.cover_image_url,
+      category: c.category,
+      author_id: c.author_id,
+      visibility: c.visibility,
+      target_age_min: c.target_age_min,
+      target_age_max: c.target_age_max,
+      schema_version: c.schema_version,
+      weeks: c.weeks ?? [],
+    }));
+  },
 
-  const db = await lsDB.init();
-  const key = endpoint.split('/')[1] as string;
-  
-  if (options.method === 'POST' || options.method === 'PUT' || options.method === 'PATCH') {
-    const body = JSON.parse(options.body as string);
-    if (!db[key]) db[key] = [];
-    const index = db[key].findIndex((item: any) => item.id === body.id);
-    if (index !== -1) {
-      db[key][index] = { ...db[key][index], ...body };
-    } else {
-      db[key].push(body);
-    }
-    lsDB.save();
-    return body;
-  }
-  
-  return db[key] || [];
+  upsert: async (course: any) => {
+    const { error } = await supabase.from('courses').upsert({
+      id: course.id,
+      title: course.title,
+      description: course.description,
+      cover_image_url: course.cover_image_url,
+      category: course.category,
+      author_id: course.author_id,
+      visibility: course.visibility,
+      target_age_min: course.target_age_min,
+      target_age_max: course.target_age_max,
+      schema_version: course.schema_version,
+      weeks: course.weeks ?? [],
+    });
+    if (error) throw error;
+  },
+
+  delete: async (id: string) => {
+    const { error } = await supabase.from('courses').delete().eq('id', id);
+    if (error) throw error;
+  },
 };
 
+// ─── Legacy API (kept for backward compatibility with App.tsx) ───────────────
 export const api = {
-  getCourses: () => callAPI('/courses'),
-  getCatalogCourses: () => callAPI('/catalogCourses'),
-  getQuests: () => callAPI('/quests'),
-  getAchievements: () => callAPI('/achievements'),
-  getFriends: () => callAPI('/friends'),
-  getLessonBlocks: () => callAPI('/lessonBlocks'),
-  
-  saveCourse: (course: any) => {
-    const method = course.id ? 'PUT' : 'POST';
+  getCourses: async () => {
+    const { data, error } = await supabase.from('user_courses').select('*');
+    if (error) {
+      console.warn('user_courses table not found, returning empty array');
+      return [];
+    }
+    return data ?? [];
+  },
+
+  getCatalogCourses: async () => {
+    const { data, error } = await supabase.from('catalog_courses').select('*');
+    if (error) {
+      console.warn('catalog_courses not found');
+      return [];
+    }
+    return data ?? [];
+  },
+
+  getQuests: async () => {
+    const { data, error } = await supabase.from('quests').select('*');
+    if (error) return [];
+    return data ?? [];
+  },
+
+  getAchievements: async () => {
+    const { data, error } = await supabase.from('achievements').select('*');
+    if (error) return [];
+    return data ?? [];
+  },
+
+  getFriends: async () => {
+    const { data, error } = await supabase.from('friends').select('*');
+    if (error) return [];
+    return data ?? [];
+  },
+
+  getLessonBlocks: async () => {
+    const { data, error } = await supabase.from('lesson_blocks').select('*');
+    if (error) return [];
+    return data ?? [];
+  },
+
+  saveCourse: async (course: any) => {
     const id = course.id || `course_${Date.now()}`;
     const courseToSave = { ...course, id };
-    
-    return callAPI(course.id ? `/courses/${id}` : '/courses', {
-      method,
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(courseToSave)
-    });
+    const { data, error } = await supabase
+      .from('user_courses')
+      .upsert(courseToSave)
+      .select()
+      .single();
+    if (error) throw error;
+    return data;
   }
 };
